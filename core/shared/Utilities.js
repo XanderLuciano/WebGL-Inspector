@@ -142,28 +142,18 @@ define([
         return gl.texStorage2D !== undefined;
     };
 
+	var webglResourceCacheList;
     util.isWebGLResource = function (value) {
-        if (value) {
-            var typename = base.typename(value);
-            switch (typename) {
-                case "WebGLBuffer":
-                case "WebGLFramebuffer":
-                case "WebGLProgram":
-                case "WebGLRenderbuffer":
-                case "WebGLShader":
-                case "WebGLTexture":
-                case "WebGLQuery":
-                case "WebGLSampler":
-                case "WebGLSync":
-                case "WebGLTransformFeedback":
-                case "WebGLVertexArrayObject":
-                    return true;
-            }
-            return false;
-        } else {
-            return false;
-        }
-    }
+		var typename = glitypename(value);
+		if ( !webglResourceCacheList ) {
+			var resources = glinamespace("gli.resources");
+			webglResourceCacheList = Object.keys( resources )
+				.map( function ( i ) {
+					return 'WebGL' + i;
+				});
+		}
+		return webglResourceCacheList.indexOf( typename ) !== -1;
+	};
 
     function prepareDocumentElement(el) {
         // FF requires all content be in a document before it'll accept it for playback
